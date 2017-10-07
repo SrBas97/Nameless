@@ -245,15 +245,30 @@ class Forum {
 	
 		foreach($forums as $item){
 			if($item->parent != 0){
-				$latest_post = $this->_db->orderWhere('posts', 'forum_id = ' . $item->id, 'post_date', 'DESC LIMIT 1')->results();
+				$exists = false;
 				
-				if(count($latest_post)){
-					$latest_post = $latest_post[0];
-		
+				$latest_post_query = $this->_db->orderWhere('posts', 'forum_id = ' . $item->id, 'post_date', 'DESC')->results();
+				
+				if(count($latest_post_query)){
+					foreach($latest_post_query as $latest_post){
+						if($latest_post->deleted != 1){
+							$latest_posts[$n]["forum_id"] = $item->id;
+							$latest_posts[$n]["date"] = $latest_post->post_date;
+							$latest_posts[$n]["author"] = $latest_post->post_creator;
+							$latest_posts[$n]["topic_id"] = $latest_post->topic_id;
+							
+							$exists = true;
+
+							break;
+						}
+					}
+				}
+
+				if($exists !== true){
 					$latest_posts[$n]["forum_id"] = $item->id;
-					$latest_posts[$n]["date"] = $latest_post->post_date;
-					$latest_posts[$n]["author"] = $latest_post->post_creator;
-					$latest_posts[$n]["topic_id"] = $latest_post->topic_id;
+					$latest_posts[$n]["date"] = null;
+					$latest_posts[$n]["author"] = null;
+					$latest_posts[$n]["topic_id"] = null;
 				}
 				
 				$n++;
@@ -263,13 +278,11 @@ class Forum {
 		$forums = null;
 	
 		foreach($latest_posts as $latest_post){
-			if(!empty($latest_post["date"])){
-				$this->_db->update('forums', $latest_post["forum_id"], array(
-					'last_post_date' => $latest_post["date"],
-					'last_user_posted' => $latest_post["author"],
-					'last_topic_posted' => $latest_post["topic_id"]
-				));
-			}
+			$this->_db->update('forums', $latest_post["forum_id"], array(
+				'last_post_date' => $latest_post["date"],
+				'last_user_posted' => $latest_post["author"],
+				'last_topic_posted' => $latest_post["topic_id"]
+			));
 		}
 	
 		$latest_posts = null;
@@ -284,14 +297,18 @@ class Forum {
 		$n = 0;
 	
 		foreach($topics as $topic){
-			$latest_post = $this->_db->orderWhere('posts', 'topic_id = ' . $topic->id, 'post_date', 'DESC LIMIT 1')->results();
+			$latest_post_query = $this->_db->orderWhere('posts', 'topic_id = ' . $topic->id, 'post_date', 'DESC')->results();
 			
-			if(count($latest_post)){
-				$latest_post = $latest_post[0];
-
-				$latest_posts[$n]["topic_id"] = $topic->id;
-				$latest_posts[$n]["date"] = $latest_post->post_date;
-				$latest_posts[$n]["author"] = $latest_post->post_creator;
+			if(count($latest_post_query)){
+				foreach($latest_post_query as $latest_post){
+					if($latest_post->deleted != 1){
+						$latest_posts[$n]["topic_id"] = $topic->id;
+						$latest_posts[$n]["date"] = $latest_post->post_date;
+						$latest_posts[$n]["author"] = $latest_post->post_creator;
+						
+						break;
+					}
+				}
 			}
 	
 			$n++;
@@ -375,6 +392,27 @@ class Forum {
 		});
 
 		return array_slice($return, 0, $number, true);
+	}
+	
+	// Returns all posts in topic
+	// Params: $tid (integer) - topic ID to retrieve post from
+	public function getPosts($tid = null){
+		if($tid){
+			// Get posts from database
+			$posts = $this->_db->get('posts', array('topic_id', '=', $tid));
+			
+			if($posts->count()){
+				$posts = $posts->results();
+				
+				// Remove deleted posts
+				foreach($posts as $key => $post){
+					if($post->deleted == 1) unset($posts[$key]);
+				}
+				
+				return array_values($posts);
+			}
+		}
+		return false;
 	}
 	
 }

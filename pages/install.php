@@ -23,7 +23,7 @@ if(isset($_GET["step"])){
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="NamelessMC installer">
-    <meta name="author" content="Samerton">
+    <meta name="author" content="NamelessMC installer">
     <meta name="robots" content="noindex">
 
     <title>NamelessMC &bull; Install</title>
@@ -213,6 +213,9 @@ if(isset($_GET["step"])){
 					),
 					'db_name' => array(
 						'required' => true
+					),
+					'db_port' => array(
+						'required' => true
 					)
 				));
 
@@ -237,7 +240,7 @@ if(isset($_GET["step"])){
 					/*
 					 *  Test connection - use MySQLi here, as the config for PDO is not written
 					 */
-					$mysqli = new mysqli(Input::get('db_address'), Input::get('db_username'), $db_password, Input::get('db_name'));
+					$mysqli = new mysqli(Input::get('db_address'), Input::get('db_username'), $db_password, Input::get('db_name'), Input::get('db_port'));
 					if($mysqli->connect_errno) {
 						$mysql_error = $mysqli->connect_errno . ' - ' . $mysqli->connect_error;
 					} else {
@@ -251,6 +254,7 @@ if(isset($_GET["step"])){
 									'		"username" => "' . Input::get('db_username') . '", // Web server database username' . PHP_EOL . 
 									'		"password" => \'' . $db_password . '\', // Web server database password' . PHP_EOL . 
 									'		"db" => "' . Input::get('db_name') . '", // Web server database name' . PHP_EOL .
+									'		"port" => "' . Input::get('db_port') . '", // Web server database port' . PHP_EOL .
 									'		"prefix" => "' . $db_prefix . '" // Web server table prefix' . PHP_EOL .
 									'	),' . PHP_EOL . 
 									'	"remember" => array(' . PHP_EOL . 
@@ -650,10 +654,15 @@ if(isset($_GET["step"])){
 								'value' => 'light'
 							));
 							
+							$queries->create('settings', array(
+								'name' => 'enable_name_history',
+								'value' => 1
+							));
+							
 							// Version update
 							$version_id = $queries->getWhere('settings', array('name', '=', 'version'));
 							$queries->update('settings', $version_id[0]->id, array(
-								'value' => '1.0.12'
+								'value' => '1.0.16'
 							));
 							
 							
@@ -695,6 +704,10 @@ if(isset($_GET["step"])){
 		  <input type="text" class="form-control" name="db_address" id="InputDBIP" value="<?php echo Input::get('db_address'); ?>" placeholder="Database Address">
 	    </div>
 	    <div class="form-group">
+	      <label for="InputDBPort">Database Port</label>
+		  <input type="text" class="form-control" name="db_port" id="InputDBPort" value="3306" placeholder="Database Port">
+	    </div>
+	    <div class="form-group">
 		  <label for="InputDBUser">Database Username</label>
 		  <input type="text" class="form-control" name="db_username" id="InputDBUser" value="<?php echo Input::get('db_username'); ?>" placeholder="Database Username">
 	    </div>
@@ -727,6 +740,9 @@ if(isset($_GET["step"])){
 				),
 				'db_name' => array(
 					'required' => true
+				),
+				'db_port' => array(
+					'required' => true
 				)
 			));
 
@@ -744,7 +760,7 @@ if(isset($_GET["step"])){
 				/*
 				 *  Test connection - use MySQLi here, as the config for PDO is not written
 				 */
-				$mysqli = new mysqli(Input::get('db_address'), Input::get('db_username'), $db_password, Input::get('db_name'));
+				$mysqli = new mysqli(Input::get('db_address'), Input::get('db_username'), $db_password, Input::get('db_name'), Input::get('db_port'));
 				if($mysqli->connect_errno) {
 					$mysql_error = $mysqli->connect_errno . ' - ' . $mysqli->connect_error;
 				} else {
@@ -758,6 +774,7 @@ if(isset($_GET["step"])){
 								'		"username" => "' . Input::get('db_username') . '", // Web server database username' . PHP_EOL . 
 								'		"password" => \'' . $db_password . '\', // Web server database password' . PHP_EOL . 
 								'		"db" => "' . Input::get('db_name') . '", // Web server database name' . PHP_EOL .
+								'		"port" => "' . Input::get('db_port') . '", // Web server database port' . PHP_EOL .
 								'		"prefix" => "' . $db_prefix . '" // Web server table prefix' . PHP_EOL .
 								'	),' . PHP_EOL . 
 								'	"remember" => array(' . PHP_EOL . 
@@ -834,7 +851,11 @@ if(isset($_GET["step"])){
 	  <form action="" method="post">
 	    <div class="form-group">
 	      <label for="InputDBIP">Database Address <strong class="text-danger">*</strong></label>
-              <input type="text" class="form-control" name="db_address" id="InputDBIP" value="<?php echo Input::get('db_address'); ?>" placeholder="Database Address">
+          <input type="text" class="form-control" name="db_address" id="InputDBIP" value="<?php echo Input::get('db_address'); ?>" placeholder="Database Address">
+	    </div>
+	    <div class="form-group">
+	      <label for="InputDBPort">Database Port <strong class="text-danger">*</strong></label>
+          <input type="text" class="form-control" name="db_port" id="InputDBPort" value="3306" placeholder="Database Port">
 	    </div>
 	    <div class="form-group">
 	      <label for="InputDBUser">Database Username <strong class="text-danger">*</strong></label>
@@ -1022,7 +1043,7 @@ if(isset($_GET["step"])){
 					),
 					28 => array(
 						'name' => 'version',
-						'value' => '1.0.12'
+						'value' => '1.0.16'
 					),
 					29 => array(
 						'name' => 'version_checked',
@@ -1079,6 +1100,10 @@ if(isset($_GET["step"])){
 					42 => array(
 						'name' => 'twitter_style',
 						'value' => 'light'
+					),
+					43 => array(
+						'name' => 'enable_name_history',
+						'value' => 1
 					)
 				);
 				

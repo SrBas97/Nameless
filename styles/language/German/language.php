@@ -46,6 +46,7 @@ $admin_language = array(
 	'addons' => 'Erweiterungen',
 	'update' => 'Updates',
 	'misc' => 'Verschiedenes',
+	'help' => 'Help',
 
 	// Admin index page
 	'statistics' => 'Statistiken',
@@ -139,6 +140,12 @@ $admin_language = array(
 	'text' => 'Text',
 	'textarea' => 'Text Area',
 	'question_deleted' => 'Frage gelöscht',
+	'name_required' => 'Name is required.',
+	'question_required' => 'Question is required.',
+	'name_minimum' => 'Name must be a minimum of 2 characters.',
+	'question_minimum' => 'Question must be a minimum of 2 characters.',
+	'name_maximum' => 'Name must be a maximum of 16 characters.',
+	'question_maximum' => 'Question must be a maximum of 16 characters.',
 	'use_followers' => 'FollowerSystem nutzen?',
 	'use_followers_help' => 'Wenn dies nicht aktiv ist, wird das FreundeSystem genutzt.',
 
@@ -168,6 +175,7 @@ $admin_language = array(
 	'can_view_page' => 'Kann Seite sehen:',
 	'redirect_page' => 'Seite weiterleiten?',
 	'redirect_link' => 'Weiterleitungslink',
+	'page_icon' => 'Page Icon',
 
 	// Admin forum page
 	'labels' => 'Themen Label',
@@ -314,6 +322,7 @@ $admin_language = array(
 	'mcassoc_instance' => 'mcassoc Instanz',
 	'mcassoc_instance_help' => 'Generiere einen Instanzcode <a href="http://jsbin.com/jadofehoqu/1/" target="_blank">hier</a>',
 	'mcassoc_key_help' => 'Hole dir deinen Key <a href="https://mcassoc.lukegb.com/" target="_blank">hier</a>',
+	'enable_name_history' => 'Enable profile username history?',
 
 	// Admin Themes, Templates and Addons
 	'themes' => 'Themen',
@@ -349,7 +358,8 @@ $admin_language = array(
 	'inverse_navbar' => 'Umgekehrte Navigationsleiste',
 	'confirm_theme_deletion' => 'Bist du sicher, dass du das <strong>{x}</strong> Theme löschen willst?<br /><br />Das Theme wird aus dem <strong>styles/themes</strong> Ordner entfernt.', // Don't replace {x}
 	'confirm_template_deletion' => 'Bist du sicher, dass du die Vorlage <strong>{x}</strong> löschen willst?<br /><br />Das Theme wird aus dem <strong>styles/templates</strong> Ordner entfernt.', // Don't replace {x}
-
+	'unable_to_enable_addon' => 'Could not enable addon. Please ensure it is a valid NamelessMC addon.',
+	
 	// Admin Misc page
 	'other_settings' => 'Andere Einstellungen',
 	'enable_error_reporting' => 'Aktiviere Fehlerrückmeldungen?',
@@ -451,6 +461,8 @@ $user_language = array(
 	'verify_account_help' => 'Bitte führe die angegeben Schritte durch um deinen Account zu verifizieren.',
 	'verification_failed' => 'Verifikation fehlgeschlagen.',
 	'verification_success' => 'Erfolgreich freigeschaltet.',
+	'complete_signup' => 'Complete Signup',
+	'registration_disabled' => 'Website registration is currently disabled.',
 
 	// UserCP
 	'user_cp' => 'Benutzer Panel',
@@ -509,7 +521,7 @@ $user_language = array(
 	'viewing_read_alerts' => 'Zeigt gelesene Nachrichten. Wechsele zu<a href="/user/alerts/"><span class="label label-warning">ungelesenen</span></a>.',
 	'no_unread_alerts' => 'Du hast keine ungelesenen Benachrichtigungen.',
 	'no_alerts' => 'Keine Benachrichtigungen',
-	'no_read_alerts' => 'Du hast keine "read" Benachrichtigungen.',  //unsure if "read" means "lesen"
+	'no_read_alerts' => 'Du hast keine gelesenen Benachrichtigungen.',
 	'view' => 'Anzeigen',
 	'alert' => 'Benachrichtigungen',
 	'when' => 'Wann',
@@ -602,7 +614,7 @@ $mod_language = array(
 	'ip_lookup' => 'IP Lookup:',
 	'registered' => 'Registriert',
 	'reason' => 'Grund:',
-	'cant_ban_root_user' => 'Root-Nutzer kann nicht bestraft werden.',
+	'cant_ban_root_user' => 'Der Administrator darf nicht verwarnt oder gebannt werden.',
 	'invalid_reason' => 'Gib bitte einen gültigen Grund an.',
 	'punished_successfully' => 'Der Nutzer wurde erfolgreich bestraft.',
 
@@ -623,6 +635,7 @@ $mod_language = array(
 	'user_profile' => 'Benutzer Profil',
 	'comment_added' => 'Kommentar hinzugefügt.',
 	'new_report_submitted_alert' => 'Neue Meldung von {x} betreffend {y}', // Don't replace "{x}" or "{y}"
+	'ingame_report' => 'Ingame Report',
 
 	// Staff applications
 	'comment_error' => 'Bitte stelle sicher, dass dein Kommentar zwischen 2 und 2048 Zeichen lang ist.',
@@ -679,7 +692,7 @@ $general_language = array(
 	'x_players_online' => 'Es sind {x} Spieler online.', // Don't replace {x}
 
 	// Other
-	'page_loaded_in' => 'Seite geladen in {x}s', // Don't replace {x}; 's' stands for 'seconds'
+	'page_loaded_in' => 'Seite wurde in {x} Sekunden geladen.', // Don't replace {x}; 's' stands for 'seconds'
 	'none' => 'Nichts',
 	'404' => 'Wir konnten diese Seite nicht finden.'
 );

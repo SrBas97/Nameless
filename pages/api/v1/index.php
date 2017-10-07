@@ -7,12 +7,13 @@
  */
 
 /*
- *  API version 1.0.0
+ *  API version 1.0.2
  *  built for NamelessMC version 1.0.10
+ *  last updated for NamelessMC version 1.0.16
  */
  
- //Headers
- header("Content-Type: application/json; charset=UTF-8");
+// Headers
+header("Content-Type: application/json; charset=UTF-8");
  
 // Get API key
 if(!isset($directories[3]) || (isset($directories[3]) && empty($directories[3]))){
@@ -121,12 +122,39 @@ class NamelessAPI {
 					$this->setGroup();
 				break;
 				
+				case 'createReport':
+					// Creating a new player report
+					$this->createReport();
+				break;
+				
+				case 'getNotifications':
+					// Get notifications for user
+					$this->getNotifications((isset($_POST['uuid']) ? $_POST['uuid'] : null));
+				break;
+				
+				case 'updateUsername':
+					// Update a user's username
+					$this->updateUsername();
+				break;
+				
+				case 'checkConnection':
+					// Check API connection
+					$this->checkConnection();
+				break;
+				
 				default:
 					// No method specified
 					$this->throwError('Invalid API method');
 				break;
 			}
 			
+		} else $this->throwError('Invalid API key');
+	}
+	
+	// Simple connection check
+	private function checkConnection(){
+		if($this->_validated === true){
+			$this->sendSuccessMessage('OK');
 		} else $this->throwError('Invalid API key');
 	}
 	
@@ -150,8 +178,15 @@ class NamelessAPI {
 			if(strlen($_POST['uuid']) > 32) $this->throwError('Invalid UUID');
 			if(strlen($_POST['email']) > 64) $this->throwError('Invalid email address');
 			
+			// Validate email
+			if(!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) $this->throwError('Invalid email address');
+			
 			// Ensure user doesn't already exist
 			$this->_db = DB::getInstance();
+			
+			$username= $this->_db->get('users', array('mcname', '=', htmlspecialchars($_POST['username'])));
+			if(count($username->results())) $this->throwError('Username already exists');
+			
 			$uuid = $this->_db->get('users', array('uuid', '=', htmlspecialchars($_POST['uuid'])));
 			if(count($uuid->results())) $this->throwError('UUID already exists');
 			
@@ -241,7 +276,10 @@ class NamelessAPI {
 				
 				$headers = 'From: ' . $siteemail . "\r\n" .
 					'Reply-To: ' . $siteemail . "\r\n" .
-					'X-Mailer: PHP/' . phpversion();
+					'X-Mailer: PHP/' . phpversion() . "\r\n" .
+					'MIME-Version: 1.0' . "\r\n" . 
+					'Content-type: text/plain; charset=UTF-8' . "\r\n";
+				
 				mail($to, $subject, $message, $headers);
 				
 			}
@@ -261,7 +299,7 @@ class NamelessAPI {
 				));
 				
 				// Success
-				$this->sendSuccessMessage('Registered successfully');
+				$this->sendSuccessMessage('Registered successfully, please check your emails for further instructions');
 			} catch(Exception $e){
 				$this->throwError('Unable to create account');
 			}
@@ -368,5 +406,234 @@ class NamelessAPI {
 			
 		} else $this->throwError('Invalid API key');
 	}
+	
+	// Create a new report
+	private function createReport(){
+		// Ensure the API key is valid
+		if($this->_validated === true){
+			if(!isset($_POST) || empty($_POST)){
+				$this->throwError('Invalid post contents');
+			}
+			
+			// Validate post request
+			// Player UUID, report content, reported player UUID and reported player username required
+			if((!isset($_POST['reporter_uuid']) || empty($_POST['reporter_uuid'])) 
+				|| (!isset($_POST['reported_username']) || empty($_POST['reported_username']))
+			    || (!isset($_POST['reported_uuid']) || empty($_POST['reported_uuid']))
+				|| (!isset($_POST['content']) || empty($_POST['content']))){
+				$this->throwError('Invalid post contents');
+			}
+			
+			// Remove -s from UUID (if present)
+			$_POST['reporter_uuid'] = str_replace('-', '', $_POST['reporter_uuid']);
+			$_POST['reported_uuid'] = str_replace('-', '', $_POST['reported_uuid']);
+			
+			// Ensure UUIDs/usernames/content are correct lengths
+			if(strlen($_POST['reported_username']) > 20) $this->throwError('Invalid username');
+			if(strlen($_POST['reported_uuid']) > 32 || strlen($_POST['reporter_uuid']) > 32) $this->throwError('Invalid UUID');
+			if(strlen($_POST['content']) >= 255) $this->throwError('Please ensure the report content is less than 255 characters long.');
 
+			// Ensure user reporting has website account, and has not been banned
+			$this->_db = DB::getInstance();
+			$user_reporting = $this->_db->get('users', array('uuid', '=', htmlspecialchars($_POST['reporter_uuid'])));
+			
+			if(!count($user_reporting->results())) $this->throwError('You must have a website account to report players.');
+			else $user_reporting = $user_reporting->results();
+			
+			if($user_reporting[0]->isbanned == 1) $this->throwError('You have been banned from the website.');
+			
+			// Ensure user has not already reported the same player, and the report is open
+			$user_reports = $this->_db->get('reports', array('reporter_id', '=', $user_reporting[0]->id));
+			if(count($user_reports->results())){
+				foreach($user_reports->results() as $report){
+					if($report->reported_uuid == $_POST['reported_uuid']){
+						if($report->status == 0) $this->throwError('You still have a report open regarding that player.');
+					}
+				}
+			}
+			
+			// Create report
+			try {
+				$this->_db->insert('reports', array(
+					'type' => 1,
+					'reporter_id' => $user_reporting[0]->id,
+					'reported_id' => 0,
+					'status' => 0,
+					'date_reported' => date('Y-m-d H:i:s'),
+					'date_updated' => date('Y-m-d H:i:s'),
+					'report_reason' => htmlspecialchars($_POST['content']),
+					'updated_by' => $user_reporting[0]->id,
+					'reported_post' => 0,
+					'reported_post_topic' => 0,
+					'reported_mcname' => htmlspecialchars($_POST['reported_username']),
+					'reported_uuid' => htmlspecialchars($_POST['reported_uuid'])
+				));
+				
+				// Alert moderators
+				$report_id = $this->_db->lastid();
+
+				// Alert for moderators
+				$mod_groups = $this->_db->get('groups', array('mod_cp', '=', 1));
+				if(count($mod_groups->results())){
+					foreach($mod_groups->results() as $mod_group){
+						$mod_users = $this->_db->get('users', array('group_id', '=', $mod_group->id));
+						if(count($mod_users->results())){
+							foreach($mod_users->results() as $individual){
+								$this->_db->insert('alerts', array(
+									'user_id' => $individual->id,
+									'type' => 'Report',
+									'url' => '/mod/reports/?rid=' . $report_id,
+									'content' => 'New report submitted',
+									'created' => date('U')
+								));
+							}
+						}
+					}
+				}
+				
+				// Success
+				$this->sendSuccessMessage('Report created successfully');
+			} catch(Exception $e){
+				$this->throwError('Unable to create report');
+			}
+			
+		} else $this->throwError('Invalid API key');
+	}
+
+	// Get number of notifications (alerts + private messages) for a user, based on username or UUID
+	private function getNotifications($id = null){
+		// Ensure the API key is valid
+		if($this->_validated === true){
+			// Ensure a UUID is set
+			if(!$id){
+				$this->throwError('Invalid username/UUID');
+			}
+			
+			// UUID or username?
+			if(strlen($id) <= 16){
+				// Username
+				$field = 'mcname';
+				
+			} else {
+				// Remove - from UUID
+				$id = str_replace('-', '', $id);
+				
+				// Ensure valid UUID was passed
+				if(strlen($id) > 32 || strlen($id) > 32) $this->throwError('Invalid UUID');
+				
+				$field = 'uuid';
+			}
+			
+			// Get user from database
+			$this->_db = DB::getInstance();
+			$user = $this->_db->get('users', array($field, '=', htmlspecialchars($id)));
+			
+			if($user->count()){
+				// Get notifications
+				$user = $user->results();
+				$user = $user[0];
+				
+				// Alerts
+				$alerts = $this->_db->get('alerts', array('user_id', '=', $user->id));
+				
+				$alerts_count = 0;
+				
+				if($alerts->count()){
+					$alerts = $alerts->results();
+					
+					foreach($alerts as $alert){
+						if($alert->read == 0) $alerts_count++;
+					}
+				}
+				
+				$alerts = null;
+				
+				// Private messages
+				$pms = $this->_db->get('private_messages_users', array('user_id', '=', $user->id));
+				
+				$pms_count = 0;
+				
+				if($pms->count()){
+					$pms = $pms->results();
+					
+					foreach($pms as $pm){
+						if($pm->read == 0) $pms_count++;
+					}
+				}
+				
+				$pms = null;
+				
+				$this->sendSuccessMessage(json_encode(array('alerts' => $alerts_count, 'messages' => $pms_count)));
+				
+			} else
+				$this->throwError('Can\'t find user with that username or UUID!');
+			
+		} else $this->throwError('Invalid API key');
+	}
+	
+	// Update a user's username
+	private function updateUsername(){
+		// Ensure the API key is valid
+		if($this->_validated === true){
+			// Check post contents
+			// Required: UUID/old username, new username
+			if(!isset($_POST['id']) || empty($_POST['id']) || !isset($_POST['new_username']) || empty($_POST['new_username']))
+				$this->throwError('Invalid post contents');
+			
+			// Remove - from ID, if any
+			$_POST['id'] = str_replace('-', '', $_POST['id']);
+			
+			// Validate post content
+			if(strlen($_POST['id']) > 32) $this->throwError('Invalid UUID');
+			else if(strlen($_POST['id']) < 2) $this->throwError('Invalid username/UUID');
+			
+			if(strlen($_POST['new_username']) < 2) $this->throwError('Invalid new username provided');
+			else if(strlen($_POST['new_username']) > 16) $this->throwError('Invalid new username provided');
+			
+			// Check for user specified
+			$this->_db = DB::getInstance();
+			$user = $this->_db->get('users', array((strlen($_POST['id']) <= 16 ? 'mcname' : 'uuid'), '=', htmlspecialchars($_POST['id'])));
+			
+			if($user->count()){
+				$user = $user->first();
+				$user = $user->id;
+				
+				// Update just Minecraft username, or displayname too?
+				$displaynames = $this->_db->get('settings', array('name', '=', 'displaynames'));
+				if(!$displaynames->count()) $this->throwError('Unable to obtain settings from database');
+				
+				$displaynames = $displaynames->first();
+				
+				if($displaynames->value == 'false'){
+					// Displaynames disabled
+					try {
+						// Update the user's displayname and Minecraft username
+						$this->_db->update('users', $user, array(
+							'username' => htmlspecialchars($_POST['new_username']),
+							'mcname' => htmlspecialchars($_POST['new_username'])
+						));
+					} catch(Exception $e){
+						$this->throwError('Unable to update username');
+					}
+					
+				} else {
+					// Displaynames are separate, just update Minecraft username
+					try {
+						// Update the user's Minecraft username
+						$this->_db->update('users', $user, array(
+							'mcname' => htmlspecialchars($_POST['new_username'])
+						));
+					} catch(Exception $e){
+						$this->throwError('Unable to update username');
+					}
+					
+				}
+				
+				$this->sendSuccessMessage('Username updated successfully');
+				
+			} else $this->throwError('Can\'t find user with that username or UUID!');
+			
+		} else $this->throwError('Invalid API key');
+	}
+	
 }

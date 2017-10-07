@@ -35,7 +35,7 @@ require('core/includes/htmlpurifier/HTMLPurifier.standalone.php'); // HTML Purif
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Admin panel">
-    <meta name="author" content="Samerton">
+    <meta name="author" content="<?php echo $sitename; ?>">
 	<meta name="robots" content="noindex">
 	<script>var groups = [];</script>
 	<?php if(isset($custom_meta)){ echo $custom_meta; } ?>
@@ -59,12 +59,12 @@ require('core/includes/htmlpurifier/HTMLPurifier.standalone.php'); // HTML Purif
 	
   </head>
   <body>
+	<?php
+	// Announcements page
+	// Load navbar
+	$smarty->display('styles/templates/' . $template . '/navbar.tpl');
+	?>
     <div class="container">
-	  <?php
-	  // Index page
-	  // Load navbar
-	  $smarty->display('styles/templates/' . $template . '/navbar.tpl');
-	  ?>
 	  <br />
 	  <div class="row">
 	    <div class="col-md-3">
@@ -382,6 +382,7 @@ require('core/includes/htmlpurifier/HTMLPurifier.standalone.php'); // HTML Purif
 			// Remove the redundant buttons from toolbar groups defined above.
 			removeButtons: 'Anchor,Styles,Specialchar,Font,About,Flash'
 		} );
+		CKEDITOR.config.disableNativeSpellChecker = false;
 	</script>
     <script type="text/javascript">
 		function colourUpdate(that) {

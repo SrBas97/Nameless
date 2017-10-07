@@ -33,7 +33,7 @@ $adm_page = "addons";
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Admin panel">
-    <meta name="author" content="Samerton">
+    <meta name="author" content="<?php echo $sitename; ?>">
 	<meta name="robots" content="noindex">
 	<?php if(isset($custom_meta)){ echo $custom_meta; } ?>
 	
@@ -56,12 +56,12 @@ $adm_page = "addons";
 	
   </head>
   <body>
+	<?php
+	// Addons page
+	// Load navbar
+	$smarty->display('styles/templates/' . $template . '/navbar.tpl');
+	?>
     <div class="container">
-	  <?php
-	  // Index page
-	  // Load navbar
-	  $smarty->display('styles/templates/' . $template . '/navbar.tpl');
-	  ?>
 	  <br />
 	  <div class="row">
 	    <div class="col-md-3">
@@ -79,6 +79,9 @@ $adm_page = "addons";
 			<span class="pull-right"><a href="/admin/addons/?action=new" class="btn btn-info"><?php echo $admin_language['install_addon']; ?></a></span><br /><br />
 			<hr>
 			<?php
+			if(Session::exists('addon_error')){
+				echo Session::flash('addon_error');
+			}
 			// Get a list of addons
 			$addons = $queries->getWhere('addons', array('id', '<>', '0'));
 			// Order alphabetically

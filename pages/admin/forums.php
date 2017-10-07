@@ -33,7 +33,7 @@ $adm_page = "forums";
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Admin panel">
-    <meta name="author" content="Samerton">
+    <meta name="author" content="<?php echo $sitename; ?>">
 	<meta name="robots" content="noindex">
 	<?php if(isset($custom_meta)){ echo $custom_meta; } ?>
 	<script>var groups = [];</script>
@@ -58,16 +58,15 @@ $adm_page = "forums";
   </head>
 
   <body>
-
-    <div class="container">	
-	  <?php
-	  // Index page
-	  // Load navbar
-	  $smarty->display('styles/templates/' . $template . '/navbar.tpl');
-	  if(Session::exists('adm-alert')){
+	<?php
+	// Forums page
+	// Load navbar
+	$smarty->display('styles/templates/' . $template . '/navbar.tpl');
+	if(Session::exists('adm-alert')){
 		echo Session::flash('adm-alert');
-	  }
-	  ?>
+	}
+	?>
+	<div class="container">
 	  <br />
 	  <div class="row">
 		<div class="col-md-3">
@@ -142,10 +141,9 @@ $adm_page = "forums";
 							</span>
 						</div>
 					</div>
-					<hr> 
 					<?php 
 					$i++;
-					}
+					if((sizeof($forums)+1) != $i) { echo '<hr>'; } }
 					?>
 
 				</div>
@@ -650,7 +648,7 @@ $adm_page = "forums";
 							<tbody>
 								<tr>
 									<td>Guest</td>
-									<td><input type="hidden" name="perm-view-0" value="0" /><input name="perm-view-0" id="Input-view-0" value="1" type="checkbox"<?php if(isset($view) && $view == 1){ echo ' checked'; } ?>></td>
+									<td><input type="hidden" name="perm-view-0" value="0" /><input onclick="colourUpdate(this);" name="perm-view-0" id="Input-view-0" value="1" type="checkbox"<?php if(isset($view) && $view == 1){ echo ' checked'; } ?>></td>
 									<td>&nbsp;</td>
 									<td>&nbsp;</td>
 								</tr>

@@ -1,3 +1,5 @@
+The notes for each release
+
 0.1.0
 - Initial release
 
@@ -362,3 +364,104 @@
 - Allow HTML use in profile wall posts
 - Fix database issues with donate addon
 - Add modify column function
+
+1.0.13
+- Only show .panel-body with subforums if $parent.forums > 0
+- Removed syntax error in Dutch language translation
+- Fix incorrect setting name in installer
+- Update Dutch translation
+- Update German translation
+- Update Portuguese translation
+- Removed HTTPS port from Twitter sharing
+- Fix Twitter widget height
+- Add voice server port to TeamSpeak join button
+- Fix incorrect topic view count
+- Display correct number of replies in news section
+- Add Twitter URL warning for EnglishUK language
+- Allow panels in custom page editor
+- Add support for offline Ban Management players in Infractions addon
+- Display Followers/Following instead of Friends within UserCP if enabled
+- Don't alert the user if they're posting on their own wall
+- Fix null UUID on manual user creation
+- Fix multiple search issues, including deleted posts being shown
+- Fix "1 hours ago" grammar
+- Ensure API registrations have unique usernames
+- Change scroll destination for post selection
+- Fix unresponsive videos on homepage
+- Hide Social column on front page if empty
+- Allow deleting "broken" posts directly from search
+- Update readme contributors
+- Fix EnglishUK language syntax error
+
+1.0.14
+- Add webchat and Discord links to readme
+- Prevent forum index from counting deleted posts
+- Fix replies not being deleted after topic deletion
+- Update Dutch translation
+- Update German translation
+- Update Norsk translation
+- Update Portuguese translation
+- Update Spanish translation
+- Add checks if the user can view staff applications
+- Removed "Top voters list coming soon" from vote page
+- Update author meta tag to site name
+- Allow custom user sidebar links
+- Add Help page
+- Add Ban Appeal addon to core Nameless release
+- Fix Ban Appeal "More" dropdown issue
+- Allow moving Staff Application link location
+- Update Ban Appeal permission check
+- Ensure email is valid for API registration
+- Automatically log user in on first load
+- Add report creation method to API
+- Update ModCP to support ingame reports
+- Update AdminCP Forum permissions issue
+- Fix avatar width issues
+- Prevent viewing files in non-accessible directories
+- Update editor line break method
+- Add signup completion for API register method
+- Remove user's friends on deletion
+
+1.0.15
+- Update API language terms
+- Improve register API method success message
+- Fix Buycraft synchronisation
+- Allow modifying package descriptions within the Donate addon
+- Fix incorrect link following MCAssoc validation
+- Update lower case addon name in link
+- Keep custom package descriptions on donation sync
+- Remove containers from global messages
+- Fix incorrect custom avatar size in forums
+- Update plugin link within AdminCP Help page
+- Add getNotifications method to API
+- Add updateUsername method to API
+- Update included library
+
+1.0.16
+- Prevent directory listing with htaccess
+- Enable native spellchecker in editor
+- Update translations
+- Add Chinese translation
+- Allow use of \n character in report content
+- Add ability to customise custom page icons
+- Display global messages in a container
+- Fix signin issue with numeric useranmes
+- Remove extra line from admin forum list
+- Remove redundant <ul> from navbar links
+- Fix MySQL error upon user creation through AdminCP
+- Update Gravatars to use https
+- Fix smileys not being HTTPS compatible
+- Allow non-3306 database ports
+- Prevent admin account switch in AdminCP
+- Remove IRC link from readme
+- Add user group to news template array
+- Fix issue with email config password resetting
+- Allow changing link location of all included addons
+- Update Infractions addon to cache infractions, and add AdvancedBan support
+- Fix AdminCP user update issue
+- Add API function to check valid connection
+- Fix staff application "More" dropdown link
+- Update admin Infractions link in user dropdown
+- Update invalid token handling during topic submission
+- Forum index and topic deletion fixes
+- Add notice when registration is disabled

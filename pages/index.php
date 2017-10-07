@@ -94,7 +94,7 @@ $smarty->assign('PLAYERS_ONLINE', str_replace('{x}', $player_count, $general_lan
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="The homepage for the <?php echo $sitename; ?> community">
-    <meta name="author" content="Samerton">
+    <meta name="author" content="<?php echo $sitename; ?>">
     <meta name="theme-color" content="#454545" />
 	<?php if(isset($custom_meta)){ echo $custom_meta; } ?>
 	
@@ -149,8 +149,9 @@ $smarty->assign('PLAYERS_ONLINE', str_replace('{x}', $player_count, $general_lan
 	$config->set('HTML.Doctype', 'XHTML 1.0 Transitional');
 	$config->set('URI.DisableExternalResources', false);
 	$config->set('URI.DisableResources', false);
-	$config->set('HTML.Allowed', 'u,p,b,a,i,small,blockquote,span[style],span[class],p,strong,em,li,ul,ol,div[align],br,img');
-	$config->set('CSS.AllowedProperties', array('text-align', 'float', 'color','background-color', 'background', 'font-size', 'font-family', 'text-decoration', 'font-weight', 'font-style', 'font-size'));
+	$config->set('CSS.Trusted', true);
+	$config->set('HTML.Allowed', 'u,p,b,i,a,small,blockquote,span[style],span[class],p,strong,em,li,ul,ol,div[align],br,img');
+	$config->set('CSS.AllowedProperties', array('position', 'padding-bottom', 'padding-top', 'top', 'left', 'height', 'width', 'overflow', 'text-align', 'float', 'color','background-color', 'background', 'font-size', 'font-family', 'text-decoration', 'font-weight', 'font-style', 'font-size'));
 	$config->set('HTML.AllowedAttributes', 'target, href, src, height, width, alt, class, *.style');
 	$config->set('Attr.AllowedFrameTargets', array('_blank', '_self', '_parent', '_top'));
 	$config->set('HTML.SafeIframe', true);
@@ -171,7 +172,8 @@ $smarty->assign('PLAYERS_ONLINE', str_replace('{x}', $player_count, $general_lan
 			'author_mcname' => htmlspecialchars($user->idToMCName($item['author'])),
 			'author_username' => htmlspecialchars($user->idToName($item['author'])),
 			'author_avatar' => $avatar,
-			'content' => $purifier->purify(htmlspecialchars_decode($item['content']))
+			'content' => $purifier->purify(htmlspecialchars_decode($item['content'])),
+			'group' => $user->getGroup($item['author'], true)
 		);
 	}
 

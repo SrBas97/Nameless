@@ -34,7 +34,7 @@ $adm_page = "users";
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Admin panel">
-    <meta name="author" content="Samerton">
+    <meta name="author" content="<?php echo $sitename; ?>">
 	<meta name="robots" content="noindex">
 	<?php if(isset($custom_meta)){ echo $custom_meta; } ?>
 	
@@ -55,19 +55,19 @@ $adm_page = "users";
 
   </head>
 
-  <body>
-    <div class="container">	
-	  <?php
-	  // "Groups" page
-	  // Load navbar
-	  $smarty->display('styles/templates/' . $template . '/navbar.tpl');
-	  
-	  echo '<br />';
-	  
-	  if(Session::exists('adm-alert')){
+  <body>	
+	<?php
+	// "Groups" page
+	// Load navbar
+	$smarty->display('styles/templates/' . $template . '/navbar.tpl');
+	
+	echo '<br />';
+	
+	if(Session::exists('adm-alert')){
 		echo Session::flash('adm-alert');
-	  }
-	  ?>
+	}
+	?>
+    <div class="container">
 	  <div class="row">
 		<div class="col-md-3">
 		  <?php require('pages/admin/sidebar.php'); ?>

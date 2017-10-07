@@ -110,27 +110,28 @@ if(isset($profile)){
 							'content' => htmlspecialchars(Input::get('post_reply'))
 						));
 						
-						// Alert profile user
-						$queries->create('alerts', array(
-							'user_id' => $profile_user[0]->id,
-							'type' => 'Profile Post',
-							'url' => '/profile/' . $mcname,
-							'content' => htmlspecialchars($user->data()->username) . ' has replied to a post on your profile.',
-							'created' => date('U')
-						));
-						
 						// Alert original post user
 						$original_post_id = $queries->getWhere('user_profile_wall_posts', array('id', '=', Input::get('pid')));
 						$original_post_id = $original_post_id[0]->author_id;
 						
-						$queries->create('alerts', array(
-							'user_id' => $original_post_id,
-							'type' => 'Profile Post',
-							'url' => '/profile/' . $mcname,
-							'content' => htmlspecialchars($user->data()->username) . ' has replied to your post on ' . htmlspecialchars($mcname) . '\'s profile.',
-							'created' => date('U')
-						));
+						if ($profile_user[0]->id !== $original_post_id && $profile_user[0]->id !== $user->data()->id) {
+							// Alert profile user
+							$queries->create('alerts', array(
+								'user_id' => $profile_user[0]->id,
+								'type' => 'Profile Post',
+								'url' => '/profile/' . $mcname,
+								'content' => htmlspecialchars($user->data()->username) . ' has replied to a post on your profile.',
+								'created' => date('U')
+							));
 						
+							$queries->create('alerts', array(
+								'user_id' => $original_post_id,
+								'type' => 'Profile Post',
+								'url' => '/profile/' . $mcname,
+								'content' => htmlspecialchars($user->data()->username) . ' has replied to your post on ' . htmlspecialchars($mcname) . '\'s profile.',
+								'created' => date('U')
+							));
+						}
 						
 						// Redirect to clear input
 						echo '<script data-cfasync="false">window.location.replace("/profile/' . $mcname . '");</script>';
@@ -170,14 +171,16 @@ if(isset($profile)){
 							'content' => htmlspecialchars(Input::get('wall_post'))
 						));
 						
-						// Alert user
-						$queries->create('alerts', array(
-							'user_id' => $profile_user[0]->id,
-							'type' => 'Profile Post',
-							'url' => '/profile/' . $mcname,
-							'content' => htmlspecialchars($user->data()->username) . ' has posted on your profile.',
-							'created' => date('U')
-						));
+						if ($profile_user[0]->id !== $user->data()->id) {
+							// Alert user
+							$queries->create('alerts', array(
+								'user_id' => $profile_user[0]->id,
+								'type' => 'Profile Post',
+								'url' => '/profile/' . $mcname,
+								'content' => htmlspecialchars($user->data()->username) . ' has posted on your profile.',
+								'created' => date('U')
+							));
+						}
 						
 						// Redirect to clear input
 						echo '<script data-cfasync="false">window.location.replace("/profile/' . $mcname . '");</script>';
@@ -260,6 +263,20 @@ if(isset($profile)){
 	require('core/includes/paginate.php');
 	$pagination = new Pagination();
 	
+	// Infractions
+	if(isset($infractions_language)){
+		require('addons/Infractions/config.php');
+		require('addons/Infractions/Infractions.php');
+		
+		$infractions = new Infractions($inf_db, $infractions_language);
+		$timeago = new Timeago();
+	
+		// Get current plugin in use
+		$inf_plugin = $queries->getWhere('infractions_settings', array('id', '=', 1));
+		$inf_plugin = $inf_plugin[0]->value;
+
+		$longuuid = ProfileUtils::formatUUID($profile_user[0]->uuid);
+	}
 
 	// Get page
 	if(isset($_GET['p'])){
@@ -291,6 +308,13 @@ if(isset($profile)){
 	$config->set('URI.SafeIframeRegexp', '%^(https?:)?//(www\.youtube(?:-nocookie)?\.com/embed/|player\.vimeo\.com/video/)%');
 	$config->set('Core.EscapeInvalidTags', true);
 	$purifier = new HTMLPurifier($config);
+	
+	// Enable username history?
+	$name_history = $queries->getWhere('settings', array('name', '=', 'enable_name_history'));
+	if(count($name_history))
+		$name_history = $name_history[0]->value;
+	else
+		$name_history = 1;
 }
 ?>
 <!DOCTYPE html>
@@ -300,7 +324,7 @@ if(isset($profile)){
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="description" content="User profile page &bull; <?php echo $sitename; ?>">
-      <meta name="author" content="Samerton">
+      <meta name="author" content="<?php echo $sitename; ?>">
       <meta name="theme-color" content="#454545" />
       <?php if(isset($custom_meta)){ echo $custom_meta; } ?>
 
@@ -326,10 +350,10 @@ if(isset($profile)){
             color: white;
         }
 		.image_container {
-			width: 262.5px;
-			height: 262.5px;
+			/* width: 262.5px;
+			height: 262.5px;*/
 			text-align: center;
-			line-height: 262.5px;
+			/*line-height: 262.5px;*/
 		}
       </style>
    </head>
@@ -519,7 +543,14 @@ if(isset($profile)){
 					<li class="active"><a href="#profile-posts" role="tab" data-toggle="tab"><?php echo $user_language['profile_posts']; ?></a></li>
                     <li><a href="#forum" role="tab" data-toggle="tab"><?php echo $user_language['about']; ?></a></li>
                     <li><a href="#topics-and-comments" role="tab" data-toggle="tab"><?php echo ucfirst($forum_language['posts']); ?></a></li>
-                    <li><a href="#name_history" role="tab" data-toggle="tab"><?php echo ucfirst($user_language['name_history']); ?></a></li>
+                    <?php if($name_history == '1'){ ?>
+					<li><a href="#name_history" role="tab" data-toggle="tab"><?php echo ucfirst($user_language['name_history']); ?></a></li>
+					<?php 
+					}
+					if(isset($infractions_language)){ 
+					?>
+					<li><a href="#infractions" role="tab" data-toggle="tab"><?php echo $infractions_language['infractions']; ?></a></li>
+					<?php } ?>
 				  </ul>
                   <!-- Tab panes -->
                   <div class="tab-content">
@@ -715,6 +746,9 @@ if(isset($profile)){
 								
 								if($permission != true) continue;
 								
+								// Check the post isn't deleted
+								if($latest_post->deleted == 1) continue;
+								
 								// Get topic title
 								$topic_title = $queries->getWhere('topics', array('id', '=', $latest_post->topic_id));
 								$topic_title = htmlspecialchars($topic_title[0]->topic_title);
@@ -738,8 +772,10 @@ if(isset($profile)){
 						}
 						?>
                      </div>
+					 <?php if($name_history == '1'){ ?>
                      <div role="tabpanel" class="tab-pane" id="name_history">
-					 <div class="well">
+					   <br />
+					   <div class="well">
 						<?php
 							// Name history
 							// Check database
@@ -852,8 +888,166 @@ if(isset($profile)){
 								}
 							}
 						?>
-				   </div>
+				       </div>
                      </div>
+					 <?php 
+					 }
+					 if(isset($infractions_language)){ 
+					 ?>
+					 <div role="tabpanel" class="tab-pane" id="infractions">
+					   <br />
+						<div class="well">
+						<h3><?php echo $infractions_language['infractions']; ?></h3>
+						<?php
+						if(!isset($_GET['type']) && !isset($_GET['id'])){
+							// Get all infractions, depending on plugin
+							switch($inf_plugin){
+								case 'bat':
+									$all_infractions = $infractions->bat_getAllInfractions($longuuid);
+								break;
+								case 'bm':
+									$all_infractions = $infractions->bm_getAllInfractions($user->data()->mcname);
+								break;
+								case 'lb':
+									$all_infractions = $infractions->lb_getAllInfractions($longuuid);
+								break;
+								case 'bam':
+									$all_infractions = $infractions->bam_getAllInfractions($longuuid);
+								break;
+								case 'bu':
+									$all_infractions = $infractions->bu_getAllInfractions($longuuid);
+								break;
+								case 'ab':
+									$all_infractions = $infractions->ab_getAllInfractions($longuuid);
+								break;
+							}
+
+							// Pagination
+							$paginate = PaginateArray($p);
+							
+							$n = $paginate[0];
+							$f = $paginate[1];
+							
+							if(count($all_infractions) > $f){
+								$d = $p * 10;
+							} else {
+								$d = count($all_infractions) - $n;
+								$d = $d + $n;
+							}
+						?>
+						<div class="table-responsive">
+						  <table class="table table-bordered">
+							<colgroup>
+							  <col span="1" style="width: 15%;">
+							  <col span="1" style="width: 15%;">
+							  <col span="1" style="width: 15%">
+							  <?php if($inf_plugin != 'bu'){ ?>
+							  <col span="1" style="width: 30%">
+							  <col span="1" style="width: 15%">
+							  <?php } else { ?>
+							  <col span="1" style="width: 45%">
+							  <?php } ?>
+							  <col span="1" style="width: 10%">
+							</colgroup>
+							<thead>
+							  <tr>
+								<td><?php echo $user_language['username']; ?></td>
+								<td><?php echo $infractions_language['staff_member']; ?></td>
+								<td><?php echo $infractions_language['action']; ?></td>
+								<td><?php echo $infractions_language['reason']; ?></td>
+								<?php if($inf_plugin != 'bu'){ ?>
+								<td><?php echo $infractions_language['created']; ?></td>
+								<?php } ?>
+								<td><?php echo $infractions_language['actions']; ?></td>
+							  </tr>
+							</thead>
+							<tbody>
+							<?php 
+							while($n < $d){
+								if(isset($mcname)) unset($mcname);
+								
+								$infraction = $all_infractions[$n];
+								if($inf_plugin == "mb"){
+									$exploded = explode('.', $infraction["id"]);
+									$mcname = $exploded[0];
+									$time = $exploded[1];
+								} else if($inf_plugin == "lb"){
+									$mcname = $infraction["username"];
+								} else {
+									$infractions_query = $queries->getWhere('users', array('uuid', '=', str_replace('-', '', $infraction["uuid"])));
+									if(empty($infractions_query)){
+										
+										if($inf_plugin == 'bat') $mcname = $infractions->bat_getUsernameFromUUID($infraction['uuid']);
+										
+										if($inf_plugin != 'bat' || !count($mcname)){
+											if($inf_plugin == 'bm') $mcname = $infractions->bm_getUsernameFromID(pack("H*", str_replace('-', '', $infraction['uuid'])));
+											
+											else {
+												$infractions_query = $queries->getWhere('uuid_cache', array('uuid', '=', str_replace('-', '', $infraction["uuid"])));
+											
+												if(empty($infractions_query)){
+													// Query Minecraft API to retrieve username
+													$profile = ProfileUtils::getProfile(str_replace('-', '', $infraction["uuid"]));
+													if(empty($profile)){
+														// Couldn't find player
+														
+													} else {
+														$result = $profile->getProfileAsArray();
+															if(isset($result['username'])){
+															$mcname = htmlspecialchars($result["username"]);
+															$uuid = htmlspecialchars(str_replace('-', '', $infraction["uuid"]));
+															try {
+																$queries->create("uuid_cache", array(
+																	'mcname' => $mcname,
+																	'uuid' => $uuid
+																));
+															} catch(Exception $e){
+																die($e->getMessage());
+															}
+														}
+													}
+												}
+												$mcname = $queries->getWhere('uuid_cache', array('uuid', '=', str_replace('-', '', $infraction["uuid"])));
+												if(count($mcname))
+													$mcname = $mcname[0]->mcname;
+												else
+													$mcname = 'Unknown';
+											}
+
+										} else {
+											$mcname = $mcname[0]->BAT_player;
+										}
+									} else {
+										$mcname = $infractions_query[0]->mcname;
+									}
+								}
+							?>
+							  <tr>
+								<td><a href="/profile/<?php echo htmlspecialchars($mcname); ?>"><?php echo htmlspecialchars($mcname); ?></a></td>
+								<td><?php if(strtolower($infraction["staff"]) !== "console"){?><a href="/profile/<?php echo htmlspecialchars($infraction["staff"]); ?>"><?php if($inf_plugin !== "mb"){ echo htmlspecialchars($infraction["staff"]); } else { echo htmlspecialchars($infractions->mb_getUsernameFromName($infraction["staff"])); }?></a><?php } else { echo 'Console'; } ?></td>
+								<td><?php echo $infraction["type_human"]; ?> <?php echo $infraction["expires_human"]; ?></td>
+								<td><?php echo htmlspecialchars($infraction["reason"]); ?></td>
+								<?php if($inf_plugin != 'bu') { ?><td><?php if(isset($infraction['issued'])){ ?><span rel="tooltip" data-placement="top" title="<?php echo $infraction["issued_human"]; ?>"><?php echo $timeago->inWords(date('d M Y, H:i', $infraction["issued"]), $time_language); ?></span><?php } else echo '-'; ?></td><?php } ?>
+								<td><a class="btn btn-primary btn-sm" href="/infractions/?type=<?php echo $infraction["type"]; ?>&amp;id=<?php echo $infraction["id"]; if(isset($infraction['past'])){ ?>&amp;past=true<?php } ?>"><?php echo $infractions_language['view']; ?></a></td>
+							  </tr>
+							<?php
+								$n++;
+							}
+							?>
+							</tbody>
+						  </table>
+						</div>
+							<?php
+							$pagination->setCurrent($p);
+							$pagination->setTotal(count($all_infractions));
+							$pagination->alwaysShowPagination();
+							
+							echo $pagination->parse();
+						}
+						?>
+						</div>
+					 </div>
+					 <?php } ?>
                   </div>
                 </div>
 				<?php } else { echo $user_language['user_hasnt_registered']; } ?>
@@ -886,6 +1080,7 @@ if(isset($profile)){
          
          // Scripts 
          require('core/includes/template/scripts.php');
+		 
          ?>
 		 
 		 <script>

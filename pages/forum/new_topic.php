@@ -113,8 +113,8 @@ if(Input::exists()) {
 			Session::flash('failure_post', '<div class="alert alert-danger alert-dismissable"> <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>' . $error_string . '</div>');
 		}
 	} else {
-		Redirect::to("/forum");
-		die();
+		// Invalid token
+		Session::flash('failure_post', '<div class="alert alert-danger">' . $admin_language['invalid_token'] . '</div>');
 	}
 }
 
@@ -129,7 +129,7 @@ $token = Token::generate();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="<?php echo $sitename; ?> Forum - new topic in <?php echo htmlspecialchars($forum_query->forum_title); ?>">
-    <meta name="author" content="Samerton">
+    <meta name="author" content="<?php echo $sitename; ?>">
 	<?php if(isset($custom_meta)){ echo $custom_meta; } ?>
 	
 	<?php
@@ -224,6 +224,8 @@ $token = Token::generate();
 			// Remove the redundant buttons from toolbar groups defined above.
 			removeButtons: 'Anchor,Styles,Specialchar,Font,About,Flash,Iframe'
 		} );
+		CKEDITOR.config.disableNativeSpellChecker = false;
+		CKEDITOR.config.enterMode = CKEDITOR.ENTER_BR;
 	</script>
   </body>
 </html>

@@ -13,9 +13,7 @@
 
   <!-- Collect the nav links, forms, and other content for toggling -->
   <div class="collapse navbar-collapse" id="main_navbar_collapse">
-	<ul class="nav navbar-nav">
-	  {$NAVBAR_LINKS}
-	</ul>
+	{$NAVBAR_LINKS}
 	<ul class="nav navbar-nav navbar-right">
 	  {* User dropdown and notifications *}
 	  {$USER_AREA}
@@ -26,7 +24,11 @@
 
 <br />
 
-{$GLOBAL_MESSAGES}
+{if isset($GLOBAL_MESSAGES) && !empty($GLOBAL_MESSAGES)}
+<div class="container">
+  {$GLOBAL_MESSAGES}
+</div>
+{/if}
 
 {if isset($ANNOUNCEMENTS) && !empty($ANNOUNCEMENTS)}
   <div class="container">

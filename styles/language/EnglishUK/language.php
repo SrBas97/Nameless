@@ -42,6 +42,7 @@ $admin_language = array(
 	'addons' => 'Addons',
 	'update' => 'Update',
 	'misc' => 'Misc',
+	'help' => 'Help',
 	
 	// Admin index page
 	'statistics' => 'Statistics',
@@ -101,7 +102,7 @@ $admin_language = array(
 	'google_analytics_help' => 'See <a href="https://support.google.com/analytics/answer/1008080?hl=en#GA" target="_blank">this guide</a> for more information, following steps 1 to 3.',
 	'social_media_links' => 'Social Media Links',
 	'youtube_url' => 'YouTube URL',
-	'twitter_url' => 'Twitter URL',
+	'twitter_url' => 'Twitter URL (Don\'t end with \'/\')',
 	'twitter_dark_theme' => 'Use dark Twitter theme?',
 	'twitter_widget_id' => 'Twitter Widget ID',
 	'google_plus_url' => 'Google Plus URL',
@@ -134,6 +135,12 @@ $admin_language = array(
 	'dropdown' => 'Dropdown',
 	'text' => 'Text',
 	'textarea' => 'Text Area',
+	'name_required' => 'Name is required.',
+	'question_required' => 'Question is required.',
+	'name_minimum' => 'Name must be a minimum of 2 characters.',
+	'question_minimum' => 'Question must be a minimum of 2 characters.',
+	'name_maximum' => 'Name must be a maximum of 16 characters.',
+	'question_maximum' => 'Question must be a maximum of 16 characters.',
 	'question_deleted' => 'Question Deleted',
 	'use_followers' => 'Use followers?',
 	'use_followers_help' => 'If disabled, the friends system will be used.',
@@ -164,6 +171,7 @@ $admin_language = array(
 	'can_view_page' => 'Can view page:',
 	'redirect_page' => 'Redirect page?',
 	'redirect_link' => 'Redirect link',
+	'page_icon' => 'Page Icon',
 	
 	// Admin forum page
 	'labels' => 'Topic Labels',
@@ -257,10 +265,10 @@ $admin_language = array(
 	
 	// Admin Minecraft page
 	'minecraft_settings' => 'Minecraft Settings',
-	'use_plugin' => 'Use Nameless Minecraft plugin?',
+	'use_plugin' => 'Enable Nameless API?',
 	'force_avatars' => 'Force Minecraft avatars?',
 	'uuid_linking' => 'Enable UUID linking?',
-	'use_plugin_help' => 'Using the plugin allows for rank synchronisation and also ingame registration and ticket submission.',
+	'use_plugin_help' => 'Enabling the API, along with the server plugin, allows for rank synchronisation and also ingame registration and report submission.',
 	'uuid_linking_help' => 'If disabled, user accounts won\'t be linked with UUIDs. It is highly recommended you keep this as enabled.',
 	'plugin_settings' => 'Plugin Settings',
 	'confirm_api_regen' => 'Are you sure you want to generate a new API key?',
@@ -310,6 +318,7 @@ $admin_language = array(
 	'mcassoc_instance' => 'mcassoc Instance',
 	'mcassoc_instance_help' => 'Generate an instance code <a href="http://jsbin.com/jadofehoqu/1/" target="_blank">here</a>',
 	'mcassoc_key_help' => 'Get your mcassoc key <a href="https://mcassoc.lukegb.com/" target="_blank">here</a>',
+	'enable_name_history' => 'Enable profile username history?',
 	
 	// Admin Themes, Templates and Addons
 	'themes' => 'Themes',
@@ -345,6 +354,7 @@ $admin_language = array(
 	'inverse_navbar' => 'Inverse Navbar',
 	'confirm_theme_deletion' => 'Are you sure you wish to delete the theme <strong>{x}</strong>?<br /><br />The theme will be deleted from your <strong>styles/themes</strong> directory.', // Don't replace {x}
 	'confirm_template_deletion' => 'Are you sure you wish to delete the template <strong>{x}</strong>?<br /><br />The template will be deleted from your <strong>styles/templates</strong> directory.', // Don't replace {x}
+	'unable_to_enable_addon' => 'Could not enable addon. Please ensure it is a valid NamelessMC addon.',
 	
 	// Admin Misc page
 	'other_settings' => 'Other Settings',
@@ -448,6 +458,8 @@ $user_language = array(
 	'verify_account_help' => 'Please follow the instructions below so we can verify you own the Minecraft account in question.',
 	'verification_failed' => 'Verification failed, please try again.',
 	'verification_success' => 'Successfully validated! You can now log in.',
+	'complete_signup' => 'Complete Signup',
+	'registration_disabled' => 'Website registration is currently disabled.',
 	
 	// UserCP
 	'user_cp' => 'UserCP',
@@ -546,8 +558,8 @@ $user_language = array(
 	'find_a_user' => 'Find a user',
 	'user_not_following' => 'This user does not follow anyone.',
 	'user_no_followers' => 'This user has no followers.',
-	'following' => 'FOLLOWING',
-	'followers' => 'FOLLOWERS',
+	'following' => 'Following',
+	'followers' => 'Followers',
 	'display_location' => 'From {x}.', // Don't replace {x}, which will be the user's location
 	'display_age_and_location' => '{x}, from {y}.', // Don't replace {x} which will be the user's age, and {y} which will be their location
 	'write_on_user_profile' => 'Write something on {x}\'s profile...', // Don't replace {x}
@@ -620,6 +632,7 @@ $mod_language = array(
 	'user_profile' => 'User Profile',
 	'comment_added' => 'Comment added.',
 	'new_report_submitted_alert' => 'New report submitted by {x} regarding user {y}', // Don't replace "{x}" or "{y}"
+	'ingame_report' => 'Ingame Report',
 	
 	// Staff applications
 	'comment_error' => 'Please ensure your comment is between 2 and 2048 characters long.',

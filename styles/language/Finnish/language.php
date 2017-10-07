@@ -42,6 +42,7 @@ $admin_language = array(
 	'addons' => 'Lisäosat',
 	'update' => 'Päivitys',
 	'misc' => 'Sekalainen',
+	'help' => 'Help',
 	
 	// Admin index page
 	'statistics' => 'Statistiikat',
@@ -135,6 +136,12 @@ $admin_language = array(
 	'text' => 'Teksti',
 	'textarea' => 'Tekstialue',
 	'question_deleted' => 'Kysymys poistettu.',
+	'name_required' => 'Name is required.',
+	'question_required' => 'Question is required.',
+	'name_minimum' => 'Name must be a minimum of 2 characters.',
+	'question_minimum' => 'Question must be a minimum of 2 characters.',
+	'name_maximum' => 'Name must be a maximum of 16 characters.',
+	'question_maximum' => 'Question must be a maximum of 16 characters.',
 	'use_followers' => 'Use followers?',
 	'use_followers_help' => 'If disabled, the friends system will be used.',
 	
@@ -164,6 +171,7 @@ $admin_language = array(
 	'can_view_page' => 'Can view page:',
 	'redirect_page' => 'Redirect page?',
 	'redirect_link' => 'Redirect link',
+	'page_icon' => 'Page Icon',
 	
 	// Admin forum page
 	'labels' => 'Aiheleima',
@@ -310,6 +318,7 @@ $admin_language = array(
 	'mcassoc_instance' => 'mcassoc Instance',
 	'mcassoc_instance_help' => 'Generate an instance code <a href="http://jsbin.com/jadofehoqu/1/" target="_blank">here</a>',
 	'mcassoc_key_help' => 'Get your mcassoc key <a href="https://mcassoc.lukegb.com/" target="_blank">here</a>',
+	'enable_name_history' => 'Enable profile username history?',
 	
 	// Admin Themes, Templates and Addons
 	'themes' => 'Teemat',
@@ -345,6 +354,7 @@ $admin_language = array(
 	'inverse_navbar' => 'Käänteinen navigaatiopalkki',
 	'confirm_theme_deletion' => 'Oletko varma, että haluat poistaa teeman <strong>{x}</strong>?<br /><br />Teema poistetaan myös <strong>styles/themes</strong> kansiosta.', // Don't replace {x}
 	'confirm_template_deletion' => 'Oletko varma, että haluat poistaa mallin <strong>{x}</strong>?<br /><br />Malli poistetaan myös <strong>styles/templates</strong> kansiosta.', // Don't replace {x}
+	'unable_to_enable_addon' => 'Could not enable addon. Please ensure it is a valid NamelessMC addon.',
 	
 	// Admin Misc page
 	'other_settings' => 'Muut asetukset',
@@ -448,6 +458,8 @@ $user_language = array(
 	'verify_account_help' => 'Please follow the instructions below so we can verify you own the Minecraft account in question.',
 	'verification_failed' => 'Verification failed, please try again.',
 	'verification_success' => 'Successfully validated! You can now log in.',
+	'complete_signup' => 'Complete Signup',
+	'registration_disabled' => 'Website registration is currently disabled.',
 	
 	// UserCP
 	'user_cp' => 'KäyttäjäCP',
@@ -620,6 +632,7 @@ $mod_language = array(
 	'user_profile' => 'Käyttäjäprofiili',
 	'comment_added' => 'Kommentti lisätty.',
 	'new_report_submitted_alert' => 'Uusi raportti käyttäjältä {x} koskien käyttäjää {y}', // Don't replace "{x}" or "{y}"
+	'ingame_report' => 'Ingame Report',
 	
 	// Staff applications
 	'comment_error' => 'Varmista, että kommenttisi on vähintään 2 ja enintään 2048 merkkiä pitkä.',

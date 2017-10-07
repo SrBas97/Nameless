@@ -8,6 +8,7 @@
 
 if(!isset($registration_enabled)){
 	// Registration is disabled
+	Session::flash('home', '<div class="alert alert-info">' . $user_language['registration_disabled'] . '</div>');
 	Redirect::to('/');
 	die();
 }
@@ -340,7 +341,10 @@ if(Input::exists()){
 										
 										$headers = 'From: ' . $siteemail . "\r\n" .
 											'Reply-To: ' . $siteemail . "\r\n" .
-											'X-Mailer: PHP/' . phpversion();
+											'X-Mailer: PHP/' . phpversion() . "\r\n" .
+											'MIME-Version: 1.0' . "\r\n" . 
+											'Content-type: text/plain; charset=UTF-8' . "\r\n";
+										
 										mail($to, $subject, $message, $headers);
 									}
 								} else {
@@ -562,7 +566,7 @@ $smarty->assign('FORM_SUBMIT', $form_submit);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="<?php echo $sitename; ?> registration form">
-    <meta name="author" content="Samerton">
+    <meta name="author" content="<?php echo $sitename; ?>">
     <meta name="theme-color" content="#454545" />
 	<?php if(isset($custom_meta)){ echo $custom_meta; } ?>
 	

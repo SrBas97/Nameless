@@ -98,7 +98,7 @@ $smarty->assign(array(
 ));
 
 // Get all posts in the topic
-$posts = $queries->getWhere("posts", array("topic_id", "=", $tid));
+$posts = $forum->getPosts($tid);
 
 // Can the user post a reply in this topic?
 $can_reply = $forum->canPostReply($topic->forum_id, $user->data()->group_id);
@@ -189,7 +189,7 @@ $purifier = new HTMLPurifier($config);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="<?php echo $sitename; ?> Forum - Topic: <?php echo htmlspecialchars($topic->topic_title); ?>">
-    <meta name="author" content="Samerton">
+    <meta name="author" content="<?php echo $sitename; ?>">
     <?php if(isset($custom_meta)){ echo $custom_meta; } ?>
 	
 	<?php
@@ -339,8 +339,9 @@ $purifier = new HTMLPurifier($config);
 	$config->set('HTML.Doctype', 'XHTML 1.0 Transitional');
 	$config->set('URI.DisableExternalResources', false);
 	$config->set('URI.DisableResources', false);
+	$config->set('CSS.Trusted', true);
 	$config->set('HTML.Allowed', 'u,p,b,i,a,small,blockquote,span[style],span[class],p,strong,em,li,ul,ol,div[align],br,img');
-	$config->set('CSS.AllowedProperties', array('text-align', 'float', 'color','background-color', 'background', 'font-size', 'font-family', 'text-decoration', 'font-weight', 'font-style', 'font-size'));
+	$config->set('CSS.AllowedProperties', array('position', 'padding-bottom', 'padding-top', 'top', 'left', 'height', 'width', 'overflow', 'text-align', 'float', 'color','background-color', 'background', 'font-size', 'font-family', 'text-decoration', 'font-weight', 'font-style', 'font-size'));
 	$config->set('HTML.AllowedAttributes', 'target, href, src, height, width, alt, class, *.style');
 	$config->set('Attr.AllowedFrameTargets', array('_blank', '_self', '_parent', '_top'));
 	$config->set('HTML.SafeIframe', true);
@@ -555,6 +556,13 @@ $purifier = new HTMLPurifier($config);
 			$("[rel=tooltip]").tooltip({ placement: 'top'});
 			var hash = window.location.hash.substring(1);
 			$("#" + hash).effect("highlight", {}, 2000);
+			(function() {
+			    if (document.location.hash) {
+			        setTimeout(function() {
+			            window.scrollTo(window.scrollX, window.scrollY - 70);
+			        }, 10);
+			    }
+			})();
 		});
 		
 		CKEDITOR.replace( 'quickreply', {
@@ -570,6 +578,9 @@ $purifier = new HTMLPurifier($config);
 			// Remove the redundant buttons from toolbar groups defined above.
 			removeButtons: 'Anchor,Styles,Specialchar,Font,About,Flash,Iframe'
 		} );
+		CKEDITOR.timestamp = '2';
+		CKEDITOR.config.disableNativeSpellChecker = false;
+		CKEDITOR.config.enterMode = CKEDITOR.ENTER_BR;
 	</script>
   </body>
 </html>

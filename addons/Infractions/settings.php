@@ -1,7 +1,7 @@
 <?php 
 /*
  *	Made by Samerton
- *  http://worldscapemc.co.uk
+ *  https://worldscapemc.com
  *
  *  License: MIT
  */
@@ -29,7 +29,8 @@ if($user->isLoggedIn()){
 
 <h3>Addon: Infractions</h3>
 Author: Samerton<br />
-Version: 1.0.4<br />
+Contributors: partydragen, relavis<br />
+Version: 1.1.0<br />
 Description: Integrate your server infractions with your website<br />
 
 <h3>Infractions Settings</h3>
@@ -62,6 +63,10 @@ if(empty($infractions_settings)){
 					'value' => htmlspecialchars(Input::get('plugin_type'))
 				));
 				
+				// Link location
+				$c->setCache('infractionsaddon');
+				$c->store('linklocation', htmlspecialchars(Input::get('linkposition')));
+					
 				echo '<script data-cfasync="false">window.location.replace(\'/admin/addons/?action=edit&addon=Infractions\');</script>';
 				die();
 				
@@ -145,8 +150,30 @@ if(empty($infractions_settings)){
     <label class="btn btn-primary<?php if($infractions_settings[0]->value == 'bu'){ ?> active<?php } ?>">
 	  <input type="radio" name="plugin_type" id="InputPluginType4" value="bu" autocomplete="off"<?php if($infractions_settings[0]->value == 'bu'){ ?> checked<?php } ?>> BungeeUtilisals
     </label>
+    <label class="btn btn-primary<?php if($infractions_settings[0]->value == 'ab'){ ?> active<?php } ?>">
+	  <input type="radio" name="plugin_type" id="InputPluginType5" value="ab" autocomplete="off"<?php if($infractions_settings[0]->value == 'ab'){ ?> checked<?php } ?>> AdvancedBan
+    </label>
   </div>
   <br /><br />
+  <div class="form-group">
+	<label for="InputLinkPosition"><?php echo $admin_language['page_link_location']; ?></label>
+	<?php
+	// Get position of link
+	$c->setCache('infractionsaddon');
+	if($c->isCached('linklocation')){
+		$link_location = $c->retrieve('linklocation');
+	} else {
+		$c->store('linklocation', 'footer');
+		$link_location = 'footer';
+	}
+	?>
+	<select name="linkposition" id="InputLinkPosition" class="form-control">
+	  <option value="navbar" <?php if($link_location == 'navbar'){ echo 'selected="selected"'; } ?>><?php echo $admin_language['page_link_navbar']; ?></option>
+	  <option value="more" <?php if($link_location == 'more'){ echo 'selected="selected"'; } ?>><?php echo $admin_language['page_link_more']; ?></option>
+	  <option value="footer" <?php if($link_location == 'footer'){ echo 'selected="selected"'; } ?>><?php echo $admin_language['page_link_footer']; ?></option>
+	  <option value="none" <?php if($link_location == 'none'){ echo 'selected="selected"'; } ?>><?php echo $admin_language['page_link_none']; ?></option>
+	</select>
+  </div>
   <input type="hidden" name="action" value="settings">
   <input type="hidden" name="token" value="<?php echo $token; ?>">
   <input type="submit" class="btn btn-primary" value="<?php echo $general_language['submit']; ?>">
@@ -194,6 +221,8 @@ if(empty($infractions_settings)){
 		  <li><a href="http://dev.bukkit.org/bukkit-plugins/ban-management/" target="_blank">Ban Management</a></li>
 		  <li><a href="https://www.spigotmc.org/resources/litebans.3715/" target="_blank">LiteBans</a></li>
 		  <li><a href="https://www.spigotmc.org/resources/bansystem-chatban-mute-report-system-chatfilter-bungeecord-mysql.17875/" target="_blank">Ban and Mute Plugin</a></li>
+		  <li><a href="https://www.spigotmc.org/resources/bungeeutilisals.7865/" target="_blank">Bungee Utilisals</a></li>
+		  <li><a href="https://www.spigotmc.org/resources/advancedban.8695/" target="_blank">Advanced Ban</a></li>
 		</ul>
       </div>
       <div class="modal-footer">
