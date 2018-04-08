@@ -175,7 +175,7 @@ $admin_language = array(
 	'can_view_page' => 'Puede ver la pagina:',
 	'redirect_page' => '¿Página redirigida?',
 	'redirect_link' => 'Link de redirección',
-	'page_icon' => 'Page Icon',
+	'page_icon' => 'Icono de Pagina',
 	
 	// Admin forum page
 	'labels' => 'Etiquetas de tema',
@@ -358,7 +358,7 @@ $admin_language = array(
 	'inverse_navbar' => 'Barra de navegación inversa',
 	'confirm_theme_deletion' => '¿Seguro que desea borrar el tema <strong>{x}</strong>?<br /><br />El tema se eliminará de su directorio <strong>styles/themes</strong>.', // Don't replace {x}
 	'confirm_template_deletion' => '¿Seguro que desea borrar la plantilla <strong>{x}</strong>?<br /><br />La plantilla se eliminará de su directorio <strong>styles/templates</strong>.', // Don't replace {x}
-	'unable_to_enable_addon' => 'Could not enable addon. Please ensure it is a valid NamelessMC addon.',
+	'unable_to_enable_addon' => 'No se puede habilitar el complemento, Asegurate de que sea un complemento compatible con NamelessMC.',
 	
 	// Admin Misc page
 	'other_settings' => 'Otra configuración',
@@ -461,8 +461,8 @@ $user_language = array(
 	'verify_account_help' => 'Por favor, sigue las instrucciones mostradas a continuación para que podamos verificar que eres el dueño de la cuenta de Minecraft.',
 	'verification_failed' => 'Verificación fallida, Por favor inténtalo de nuevo.',
 	'verification_success' => 'Cuenta verificada correctamente, Ya puedes iniciar sesión.',
-	'complete_signup' => 'Completar Registro',
-	'registration_disabled' => 'Website registration is currently disabled.',
+	'complete_signup' => 'Completar el Registro',
+	'registration_disabled' => 'El registro de nuevas cuentas esta desactivado.',
 	
 	// UserCP
 	'user_cp' => 'Panel Usuario',
@@ -824,7 +824,7 @@ $time_language = array(
 	'about_1_month' => 'hace 1 mes',
 	'_months' => 'hace {x} meses',
 	'about_1_year' => 'hace 1 año',
-	'over_x_years' => 'hace más {x} años'
+	'over_x_years' => 'hace más de {x} años'
 );
  
 /*
@@ -842,7 +842,7 @@ $table_language = array(
  *  API language
  */
 $api_language = array(
-	'register' => 'Registro completo'
+	'register' => 'Registro completado'
 );
 
 ?>
